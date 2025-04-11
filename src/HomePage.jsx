@@ -1,28 +1,28 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 const Homepage = () => {
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuRef = useRef();
+  const toggleBtnRef = useRef();
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
   useEffect(() => {
-    const closeMenuOnOutsideClick = (e) => {
-      const menu = document.getElementById("mobileMenu");
-      const toggleBtn = document.getElementById("menuToggle");
-
+    const handleClickOutside = (e) => {
       if (
-        menu &&
-        !menu.contains(e.target) &&
-        toggleBtn &&
-        !toggleBtn.contains(e.target)
+        menuOpen &&
+        menuRef.current &&
+        !menuRef.current.contains(e.target) &&
+        toggleBtnRef.current &&
+        !toggleBtnRef.current.contains(e.target)
       ) {
         setMenuOpen(false);
       }
     };
 
-    document.addEventListener("click", closeMenuOnOutsideClick);
-    return () => document.removeEventListener("click", closeMenuOnOutsideClick);
-  }, []);
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
+  }, [menuOpen]);
 
   return (
     <header className="relative bg-gray-100 font-[Poppins]">
@@ -35,11 +35,16 @@ const Homepage = () => {
 
       {/* Navigation */}
       <nav className="absolute top-0 left-0 w-full flex justify-between items-center p-4 md:p-6 z-20">
-        <div className="text-white text-xl md:text-3xl font-bold">
-          RideOn Rental
+        {/* Logo - Aligned and Balanced */}
+        <div className="text-white font-bold flex items-center">
+          <span className="text-orange-500 text-6xl md:text-7xl">R</span>
+          <div className="flex flex-col ml-[2px] text-sm sm:text-base md:text-lg leading-[1] justify-center">
+            <span>ideOn</span>
+            <span>rental</span>
+          </div>
         </div>
 
-        {/* Desktop Nav */}
+        {/* Desktop Navigation */}
         <ul className="hidden md:flex space-x-4 md:space-x-6 text-white text-sm md:text-lg">
           <li><a className="hover:underline" href="#">Home</a></li>
           <li><a className="hover:underline" href="#">About Us</a></li>
@@ -57,7 +62,7 @@ const Homepage = () => {
 
         {/* Hamburger Menu Icon */}
         <button
-          id="menuToggle"
+          ref={toggleBtnRef}
           className="md:hidden text-white focus:outline-none"
           onClick={toggleMenu}
         >
@@ -81,7 +86,7 @@ const Homepage = () => {
       {/* Mobile Menu */}
       {menuOpen && (
         <div
-          id="mobileMenu"
+          ref={menuRef}
           className="absolute top-16 left-0 w-full bg-gray-900 text-white p-4 md:hidden z-20"
         >
           <ul className="flex flex-col space-y-3 text-base">

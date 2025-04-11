@@ -8,6 +8,7 @@ import ExploreSection from './ExploreSecton'
 import AboutUs from './AboutUs'
 import ContactUs from './ContactUs';
 import Footer from './Footer';
+import HeroSection from './HeroSection';
 
 
 createRoot(document.getElementById('root')).render(
@@ -18,5 +19,6 @@ createRoot(document.getElementById('root')).render(
     <AboutUs/>
     <ContactUs/>
     <Footer/>
+    <HeroSection/>
   </StrictMode>,
 )
