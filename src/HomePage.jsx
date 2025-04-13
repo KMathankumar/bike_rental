@@ -35,14 +35,28 @@ const Homepage = () => {
 
       {/* Navigation */}
       <nav className="absolute top-0 left-0 w-full flex justify-between items-center p-4 md:p-6 z-20">
-        {/* Logo - Aligned and Balanced */}
-        <div className="text-white font-bold flex items-center">
-          <span className="text-orange-500 text-6xl md:text-7xl">R</span>
-          <div className="flex flex-col ml-[2px] text-sm sm:text-base md:text-lg leading-[1] justify-center">
-            <span>ideOn</span>
-            <span>rental</span>
-          </div>
-        </div>
+{/* Logo */}
+<div className="flex items-center gap-0.5 sm:gap-1 p-2 rounded-md">
+      {/* Large R */}
+      <span className="text-orange-500 text-4xl sm:text-5xl md:text-6xl font-bold leading-none">
+        R
+      </span>
+
+      {/* ideOn rental stacked with further reduced vertical gap */}
+      <div className="flex flex-col text-white">
+        <span className="text-base sm:text-lg md:text-xl font-semibold leading-tight">
+          ideOn
+        </span>
+        <span className="text-base sm:text-base md:text-xl  font-semibold -mt-[0.3em] leading-tight">
+          rental
+        </span>
+      </div>
+    </div>
+
+
+
+
+
 
         {/* Desktop Navigation */}
         <ul className="hidden md:flex space-x-4 md:space-x-6 text-white text-sm md:text-lg">
