@@ -1,6 +1,7 @@
+
+
 import Footer from "./Footer";
 import HomePage from "./HomePage";
-
 import Preferences from "./Preferences";
 import HeroSection from "./HeroSection";
 import AboutUs from "./AboutUs"
@@ -12,6 +13,7 @@ import Logo from "./Logo"
 import Logo2 from "./Logo2"
 import Login from "./Login";
 import VendorCard from "./VendorCard";
+import DocumentAuthentication from "./DocumentAuthentication";
 
 function App() {
   return (
@@ -30,6 +32,7 @@ function App() {
       <Logo/>
       <Logo2/>
       <VendorCard/>
+      <DocumentAuthentication/>
     </div>
   );
 }

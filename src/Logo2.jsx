@@ -17,6 +17,7 @@ function Logo2() {
           rental
         </span>
       </div>
+      
     </div>
   );
 }
