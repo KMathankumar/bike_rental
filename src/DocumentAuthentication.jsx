@@ -27,13 +27,23 @@ const DocumentAuthentication = () => {
       <header className="bg-black text-white p-3 sticky top-0 z-50 shadow-md">
         <div className="container mx-auto flex justify-between items-center">
           {/* Logo */}
-          <div className="flex items-center gap-1">
-            <span className="text-orange-500 text-2xl sm:text-3xl font-bold">R</span>
-            <div className="flex flex-col text-white">
-              <span className="text-xs sm:text-sm font-semibold leading-tight">ideOn</span>
-              <span className="text-xs sm:text-sm font-semibold -mt-1 leading-tight">rental</span>
-            </div>
-          </div>
+          <div className="flex items-center gap-0.5 sm:gap-1 p-2 rounded-md">
+      {/* Large R */}
+      <span className="text-orange-500 text-4xl sm:text-5xl md:text-6xl font-bold leading-none">
+        R
+      </span>
+
+      {/* ideOn rental stacked with further reduced vertical gap */}
+      <div className="flex flex-col text-white">
+        <span className="text-base sm:text-lg md:text-xl font-semibold leading-tight">
+          ideOn
+        </span>
+        <span className="text-base sm:text-base md:text-xl  font-semibold -mt-[0.3em] leading-tight">
+          rental
+        </span>
+      </div>
+    </div>
+
 
           {/* Navigation Group */}
           <div className="flex items-center gap-4">

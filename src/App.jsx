@@ -14,6 +14,14 @@ import Logo2 from "./Logo2"
 import Login from "./Login";
 import VendorCard from "./VendorCard";
 import DocumentAuthentication from "./DocumentAuthentication";
+import Header from "./Header";
+import Payment from "./Payment";
+
+import Booking from "./Booking";
+import VehicleRentalPage from "./VehicleRentalPage";
+import ReviewSection from "./ReviewSection";
+import Review from "./Review";
+
 
 function App() {
   return (
@@ -32,7 +40,17 @@ function App() {
       <Logo/>
       <Logo2/>
       <VendorCard/>
+      <Booking/>
       <DocumentAuthentication/>
+      <Footer/>
+      <Header/>
+      <Payment/>
+      <Footer/>
+      <VehicleRentalPage/>
+      <ReviewSection/>
+      <Review/>
+
+
     </div>
   );
 }
