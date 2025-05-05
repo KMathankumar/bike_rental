@@ -1,187 +1,219 @@
 import React, { useState } from "react";
-import {
-  FaStar,
-  FaStarHalfAlt,
-  FaMapMarkerAlt,
-  FaCalendarAlt,
-} from "react-icons/fa";
+import { FaMapMarkerAlt, FaCalendarAlt, FaGasPump, FaTachometerAlt, FaCogs } from "react-icons/fa";
 import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { useLocation } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 
 const VehicleRentalPage = () => {
+  const { state } = useLocation();
+  const bike = state?.bike;
+  const navigate = useNavigate();
+
   const [quantity, setQuantity] = useState(1);
   const [pickupDate, setPickupDate] = useState(new Date());
-  const [dropoffDate, setDropoffDate] = useState(new Date());
+  const [dropoffDate, setDropoffDate] = useState(
+    new Date(new Date().getTime() + 24 * 60 * 60 * 1000)
+  );
+  const [showPopup, setShowPopup] = useState(false);
+  const [agreeTerms, setAgreeTerms] = useState(false);
+  const [agreeLicense, setAgreeLicense] = useState(false);
+  const [showWarning, setShowWarning] = useState(false);
 
-  const increaseQty = () => setQuantity((prev) => prev + 1);
+  const increaseQty = () => {
+    if (quantity < bike.quantity) setQuantity((prev) => prev + 1);
+  };
+
   const decreaseQty = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
+  const handlePickupDateChange = (date) => {
+    setPickupDate(date);
+    const nextDay = new Date(date.getTime() + 24 * 60 * 60 * 1000);
+    setDropoffDate(nextDay);
+  };
+
+  const handleBuyClick = () => {
+    navigate("/document-authentication"); // ✅ Move to authentication page
+  };
+
+  if (!bike) return <div className="text-center py-10">Bike data not found!</div>;
+
   return (
-    <div className="min-h-screen bg-gray-100 font-roboto">
+    <div className="min-h-screen bg-gray-100 font-roboto pt-24">
       <main className="container mx-auto p-4 max-w-6xl">
         <div className="bg-white rounded-lg shadow-md overflow-hidden">
           <div className="flex flex-col md:flex-row">
             {/* Left Section */}
-            <div className="p-6 md:w-2/3">
-              <div className="flex flex-col sm:flex-row gap-6">
-                <div className="w-full sm:w-48 flex-shrink-0">
-                  <img
-                    src="https://storage.googleapis.com/a1aa/image/b60daeba-5d43-4f4f-556b-63554d99ff51.jpg"
-                    alt="Honda Dio"
-                    className="w-full h-auto object-contain"
-                  />
-                </div>
-
-                <div className="flex-1">
-                  <h1 className="text-2xl font-bold">Honda Dio</h1>
-                  <div className="space-y-2 mt-2">
-                    <p>
-                      Rent Amount: <span className="font-semibold">₹800</span>
-                    </p>
-                    <p>
-                      Refundable Deposit:{" "}
-                      <span className="font-semibold">₹2000</span>
-                    </p>
-
-                    <div className="flex items-center text-gray-600">
+            <div className="md:w-2/3">
+              <div className="w-full">
+                <img
+                  src={bike.img}
+                  alt={bike.name}
+                  className="w-full h-96 object-cover"
+                />
+              </div>
+              <div className="p-6">
+                <h1 className="text-4xl font-bold text-orange-500">{bike.name}</h1>
+                <div className="space-y-2 mt-2">
+                  <p>
+                    Rent Amount: <span className="font-semibold">₹{bike.price}</span>
+                  </p>
+                  <p>
+                    Refundable Deposit: <span className="font-semibold">₹{bike.deposit}</span>
+                  </p>
+                  <div className="text-gray-600 space-y-1">
+                    <div className="flex items-center">
                       <FaMapMarkerAlt className="mr-2" />
-                      <span>Pickup location: ABC Rental, Theni</span>
+                      <span>Pickup location: {bike.vendorName}</span>
+                    </div>
+                    <div className="text-sm text-gray-700 ml-6">
+                      <strong>Available:</strong> {bike.quantity}
+                    </div>
+                  </div>
+
+                  {/* Quantity Selector */}
+                  <div className="flex items-center mt-4">
+                    <button
+                      onClick={decreaseQty}
+                      className="border border-gray-300 rounded-l px-3 py-1 bg-gray-100"
+                    >
+                      -
+                    </button>
+                    <div className="border-t border-b border-gray-300 px-4 py-1">
+                      {quantity}
+                    </div>
+                    <button
+                      onClick={increaseQty}
+                      className="border border-gray-300 rounded-r px-3 py-1 bg-gray-100"
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {/* Date Pickers */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+                    <div className="relative w-full">
+                      <label className="absolute -top-1 left-3 bg-white px-1 text-sm text-gray-600 font-medium z-10 flex items-center gap-1">
+                        <FaCalendarAlt className="text-xs" />
+                        <span>Pickup Date & Time</span>
+                      </label>
+                      <DatePicker
+                        selected={pickupDate}
+                        onChange={handlePickupDateChange}
+                        showTimeSelect
+                        dateFormat="Pp"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none mt-2"
+                      />
                     </div>
 
-                    {/* Quantity Selector */}
-                    <div className="flex items-center mt-4">
-                      <button
-                        onClick={decreaseQty}
-                        className="border border-gray-300 rounded-l px-3 py-1 bg-gray-100"
-                      >
-                        -
-                      </button>
-                      <div className="border-t border-b border-gray-300 px-4 py-1">
-                        {quantity}
-                      </div>
-                      <button
-                        onClick={increaseQty}
-                        className="border border-gray-300 rounded-r px-3 py-1 bg-gray-100"
-                      >
-                        +
-                      </button>
+                    <div className="relative w-full">
+                      <label className="absolute -top-1 left-3 bg-white px-1 text-sm text-gray-600 font-medium z-10 flex items-center gap-1">
+                        <FaCalendarAlt className="text-xs" />
+                        <span>Dropoff Date & Time</span>
+                      </label>
+                      <DatePicker
+                        selected={dropoffDate}
+                        onChange={(date) => setDropoffDate(date)}
+                        showTimeSelect
+                        dateFormat="Pp"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none mt-2"
+                      />
                     </div>
+                  </div>
+
+                  <div className="flex gap-3 mt-6">
+                    <button
+                      onClick={() => setShowPopup(true)}
+                      className="border border-gray-300 rounded px-4 py-2 text-sm hover:bg-gray-50"
+                    >
+                      View Details
+                    </button>
+                    <button className="border border-gray-300 rounded px-4 py-2 text-sm hover:bg-gray-50">
+                      Terms
+                    </button>
+                    <button className="border border-gray-300 rounded px-4 py-2 text-sm hover:bg-gray-50">
+                      View location on map
+                    </button>
                   </div>
                 </div>
               </div>
-
-              {/* Date Pickers */}
-              <div className="mt-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {/* Pickup Date Picker */}
-                  <div className="relative w-full">
-                    {/* Label overlays input border */}
-                    <label className="absolute -top-1 left-3 bg-white px-1 text-sm text-gray-600 font-medium z-10 flex items-center gap-1">
-                      <FaCalendarAlt className="text-xs" />
-                      <span>Pickup Date & Time</span>
-                    </label>
-
-                    {/* DatePicker input */}
-                    <DatePicker
-                      selected={pickupDate}
-                      onChange={(date) => setPickupDate(date)}
-                      showTimeSelect
-                      dateFormat="Pp"
-                      placeholderText="Select pickup date & time"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none mt-2"
-                    />
-                  </div>
-
-                  {/* Dropoff Date Picker */}
-                  <div className="flex flex-col">
-                    <label className="text-sm font-semibold mb-2 text-gray-700 flex items-center">
-                      <FaCalendarAlt className="mr-2" /> Dropoff Date & Time
-                    </label>
-                    <DatePicker
-                      selected={dropoffDate}
-                      onChange={(date) => setDropoffDate(date)}
-                      showTimeSelect
-                      dateFormat="Pp"
-                      placeholderText="Select dropoff date & time"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-orange-500 focus:outline-none"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Buttons */}
-              <div className="flex flex-wrap gap-3 mt-6">
-                <button className="border border-gray-300 rounded px-4 py-2 text-sm hover:bg-gray-50">
-                  View Details
-                </button>
-                <button className="border border-gray-300 rounded px-4 py-2 text-sm hover:bg-gray-50">
-                  Terms
-                </button>
-                <button className="border border-gray-300 rounded px-4 py-2 text-sm hover:bg-gray-50">
-                  View location on map
-                </button>
-              </div>
-
-              <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-4 rounded mt-4">
-                Buy
-              </button>
             </div>
 
-            {/* Order Summary (Same as before) */}
-            <div className="bg-gray-50 p-6 md:w-1/3 border-t md:border-t-0 md:border-l border-gray-200">
-              <h2 className="text-xl font-bold mb-4">Order Summary</h2>
-              <div className="space-y-3 text-sm">
-                <div className="flex justify-between font-semibold border-b border-gray-300 pb-2">
-                  <span>Subtotal</span>
-                  <span>₹800</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Vehicle Rental Cost</span>
-                  <span>₹680</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>Total Booking Amount</span>
-                  <span>₹680</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>CGST (14%)</span>
-                  <span>₹56</span>
-                </div>
-                <div className="flex justify-between">
-                  <span>SGST (14%)</span>
-                  <span>₹56</span>
-                </div>
-                <div className="flex justify-between font-semibold border-t border-gray-300 pt-2">
-                  <span>Payable Amount</span>
-                  <span>₹800</span>
+            {/* Right Section - Order Summary and Buy */}
+            <div className="bg-gray-50 p-6 md:w-1/3 border-t md:border-t-0 md:border-l border-gray-200 flex flex-col justify-between">
+              <div>
+                <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+                <div className="space-y-3 text-sm">
+                  <div className="flex justify-between font-semibold border-b border-gray-300 pb-2">
+                    <span>Subtotal</span>
+                    <span>₹{bike.price}</span>
+                  </div>
+                  <div className="flex justify-between"><span>Vehicle Rental Cost</span><span>₹{bike.price - 120}</span></div>
+                  <div className="flex justify-between"><span>Total Booking Amount</span><span>₹{bike.price - 120}</span></div>
+                  <div className="flex justify-between"><span>CGST (14%)</span><span>₹{(bike.price * 0.07).toFixed(0)}</span></div>
+                  <div className="flex justify-between"><span>SGST (14%)</span><span>₹{(bike.price * 0.07).toFixed(0)}</span></div>
+                  <div className="flex justify-between font-semibold border-t border-gray-300 pt-2"><span>Payable Amount</span><span>₹{bike.price}</span></div>
                 </div>
               </div>
-
-              <button className="w-full bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-4 rounded mt-4">
-                Cancellation policy
-              </button>
-
-              <div className="mt-4 space-y-3 text-sm">
+              {/* Checkboxes & Buy */}
+              <div className="mt-6 space-y-3 text-sm">
                 <label className="flex items-start">
-                  <input type="checkbox" className="mt-1 mr-2" />
-                  <span>
-                    Confirm that you are above 18 and agree to all
-                    <a href="#" className="text-blue-600 underline ml-1">
-                      Terms & Conditions
-                    </a>
-                  </span>
+                  <input type="checkbox" className="mt-1 mr-2" checked={agreeTerms} onChange={(e) => setAgreeTerms(e.target.checked)} />
+                  <span>Confirm that you are above 18 and agree to all <a href="#" className="text-blue-600 underline ml-1">Terms & Conditions</a></span>
                 </label>
                 <label className="flex items-start">
-                  <input type="checkbox" className="mt-1 mr-2" />
-                  <span>
-                    Submit original Driving License at pickup; it will be
-                    returned at drop-off.
-                  </span>
+                  <input type="checkbox" className="mt-1 mr-2" checked={agreeLicense} onChange={(e) => setAgreeLicense(e.target.checked)} />
+                  <span>Submit original Driving License at pickup; it will be returned at drop-off.</span>
                 </label>
+                <button onClick={handleBuyClick} className={`w-full font-bold py-3 px-4 rounded ${agreeTerms && agreeLicense ? "bg-orange-500 hover:bg-orange-600 text-white" : "bg-gray-300 text-gray-600 cursor-not-allowed"}`}>Buy</button>
               </div>
             </div>
           </div>
         </div>
       </main>
+
+      {/* Warning Popup */}
+      <AnimatePresence>
+        {showWarning && (
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <motion.div initial={{ scale: 0.8 }} animate={{ scale: 1 }} exit={{ scale: 0.8 }} className="bg-white p-6 rounded-lg text-center max-w-sm mx-auto">
+              <h2 className="text-xl font-bold text-red-500 mb-4">Warning</h2>
+              <p className="text-gray-600 mb-4">Please agree to the terms and license before proceeding!</p>
+              <button onClick={() => setShowWarning(false)} className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-full font-semibold">OK</button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* View Details Popup */}
+      {showPopup && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <motion.div initial={{ opacity: 0, scale: 0.8 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.3 }} className="bg-white rounded-2xl shadow-xl overflow-hidden w-full max-w-2xl">
+            <img src={bike.img} alt={bike.name} className="w-full h-64 object-cover" />
+            <div className="p-6">
+              <h2 className="text-3xl font-extrabold text-center text-orange-500 mb-6">{bike.name}</h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-gray-700 text-md">
+                <div>
+                  <p className="flex items-center gap-2"><FaCalendarAlt className="text-orange-500" /> Model Year: {bike.modelYear}</p>
+                  <p className="flex items-center gap-2"><FaTachometerAlt className="text-orange-500" /> Mileage: {bike.mileage}</p>
+                  <p className="flex items-center gap-2"><FaCogs className="text-orange-500" /> Engine: {bike.cc} CC</p>
+                </div>
+                <div>
+                  <p className="flex items-center gap-2"><FaGasPump className="text-orange-500" /> Fuel: {bike.fuel}</p>
+                  <p>Extra Charge: {bike.extraCharge}</p>
+                  <p>Km Limit: {bike.kmLimit}</p>
+                  <p className="mt-2"><span className="bg-green-100 text-green-800 px-2 py-1 rounded-full font-semibold">₹{bike.price} / day</span></p>
+                  <p><span className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full font-semibold">{bike.quantity} Available</span></p>
+                </div>
+              </div>
+              <div className="flex justify-center mt-8">
+                <button onClick={() => setShowPopup(false)} className="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-8 rounded-full shadow-md transition transform hover:scale-105">Close</button>
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </div>
   );
 };

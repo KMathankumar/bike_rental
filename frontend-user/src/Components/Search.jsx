@@ -22,9 +22,16 @@ const Search = () => {
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
-    return () =>
-      document.removeEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuOpen]);
+
+  // 🛠 Smooth scroll to Vendor Section
+  const handleScroll = () => {
+    const vendorSection = document.getElementById("vendor-section");
+    if (vendorSection) {
+      vendorSection.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <header className="relative bg-black text-white font-[Poppins]">
@@ -56,28 +63,10 @@ const Search = () => {
 
           {/* Desktop Nav */}
           <ul className="hidden md:flex space-x-4 md:space-x-6 text-sm md:text-base items-center">
-            <li>
-              <a href="#" className="hover:text-orange-500">
-                Home
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-orange-500">
-                About Us
-              </a>
-            </li>
-            <li>
-              <a href="#" className="hover:text-orange-500">
-                Contact
-              </a>
-            </li>
-            <li>
-              <img
-                src="https://storage.googleapis.com/a1aa/image/UXSGhObe3tltLEtGNJrXkXr8UAwfj4preR0Mgs2pz3o.jpg"
-                alt="Profile"
-                className="rounded-full w-9 h-9 object-cover"
-              />
-            </li>
+            <li><a href="#" className="hover:text-orange-500">Home</a></li>
+            <li><a href="#" className="hover:text-orange-500">About Us</a></li>
+            <li><a href="#" className="hover:text-orange-500">Contact</a></li>
+            <li><img src="https://storage.googleapis.com/a1aa/image/UXSGhObe3tltLEtGNJrXkXr8UAwfj4preR0Mgs2pz3o.jpg" alt="Profile" className="rounded-full w-9 h-9 object-cover" /></li>
           </ul>
 
           {/* Hamburger Icon */}
@@ -86,70 +75,37 @@ const Search = () => {
             className="md:hidden text-white focus:outline-none"
             onClick={toggleMenu}
           >
-            <svg 
-              className="w-8 h-8"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M4 6h16M4 12h16M4 18h16"
-              />
+            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
         </nav>
 
-        {/* Mobile Menu with Mirror Effect (using -webkit-box-reflect) */}
+        {/* Mobile Menu */}
         {menuOpen && (
           <div
             ref={menuRef}
             className="md:hidden w-full p-6 text-white text-base space-y-4 relative z-30"
             style={{
               backgroundColor: "rgba(0, 0, 0, 0.6)",
-              WebkitBoxReflect:
-                "below 0px linear-gradient(transparent, rgba(255,255,255,0.2))",
+              WebkitBoxReflect: "below 0px linear-gradient(transparent, rgba(255,255,255,0.2))",
             }}
           >
             <ul className="flex flex-col space-y-3">
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-orange-500 transition-all duration-200"
-                >
-                  Home
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-orange-500 transition-all duration-200"
-                >
-                  About Us
-                </a>
-              </li>
-              <li>
-                <a
-                  href="#"
-                  className="hover:text-orange-500 transition-all duration-200"
-                >
-                  Contact
-                </a>
-              </li>
+              <li><a href="#" className="hover:text-orange-500 transition-all duration-200">Home</a></li>
+              <li><a href="#" className="hover:text-orange-500 transition-all duration-200">About Us</a></li>
+              <li><a href="#" className="hover:text-orange-500 transition-all duration-200">Contact</a></li>
             </ul>
           </div>
         )}
 
-        {/* Animated Taglines */}
+        {/* Taglines + Down Arrow Section */}
         <div className="text-center mt-20">
           <motion.h1
             initial={{ y: -40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 0.8, ease: "easeOut" }}
-            className="text-3xl md:text-4xl lg:text-5xl font-bold text-orange-500"
+            className="text-4xl md:text-5xl font-bold text-orange-500"
           >
             Your Bikes, Our Platform
           </motion.h1>
@@ -157,30 +113,27 @@ const Search = () => {
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             transition={{ duration: 1, delay: 0.3, ease: "easeOut" }}
-            className="text-2xl md:text-3xl lg:text-4xl font-bold text-orange-500 mt-2"
+            className="text-2xl md:text-3xl text-orange-500 mt-2"
           >
-            A Perfect Ride!
+            Explore the Perfect Ride Today!
           </motion.h2>
-        </div>
 
-        {/* Animated Search Bar */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.8 }}
-          className="mt-6 mb-10 w-full px-4"
-        >
-          <div className="relative max-w-xl mx-auto">
-            <input
-              type="text"
-              placeholder="Search Specified"
-              className="w-full p-3 pl-12 rounded-full text-black focus:outline-none text-sm shadow-md"
-            />
-            <div className="absolute left-4 top-1/2 transform -translate-y-1/2">
-              <i className="fas fa-search text-black text-sm" />
-            </div>
-          </div>
-        </motion.div>
+          {/* Down Arrow Button */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.2, duration: 0.6 }}
+            className="flex justify-center mt-12"
+          >
+            <button
+  onClick={handleScroll}
+  className="bg-transparent text-orange-500 hover:text-white text-5xl animate-bounce focus:outline-none"
+>
+  ⮯
+</button>
+
+          </motion.div>
+        </div>
       </div>
     </header>
   );

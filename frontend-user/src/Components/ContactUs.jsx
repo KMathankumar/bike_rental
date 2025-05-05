@@ -1,11 +1,54 @@
 import React, { useEffect, useState } from "react";
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const ContactUs = () => {
   const [animate, setAnimate] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // mock check
 
   useEffect(() => {
     setAnimate(true);
+
+    // Example: Check login status from localStorage or auth context
+    const user = localStorage.getItem("userToken");
+    if (user) {
+      setIsLoggedIn(true);
+    }
   }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!isLoggedIn) {
+      toast.error("Please login to send message");
+      return;
+    }
+
+    const name = e.target.name.value;
+    const email = e.target.email.value;
+    const message = e.target.message.value;
+
+    try {
+      const response = await fetch("http://localhost:5000/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name, email, message }),
+      });
+
+      const result = await response.json();
+      if (result.success) {
+        toast.success("Message sent successfully!");
+        e.target.reset();
+      } else {
+        toast.error("Failed to send message.");
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error("Something went wrong. Try again later.");
+    }
+  };
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 font-[Poppins] overflow-hidden p-4">
@@ -34,10 +77,11 @@ const ContactUs = () => {
             animate ? "translate-x-0 opacity-100" : "translate-x-10 opacity-0"
           }`}
         >
-          <form className="space-y-6">
+          <form className="space-y-6" onSubmit={handleSubmit}>
             <div>
               <label className="block text-black font-bold mb-2">Name</label>
               <input
+                name="name"
                 type="text"
                 placeholder="Enter Your Name"
                 className="w-full p-2 border border-orange-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 animate-glow"
@@ -46,6 +90,7 @@ const ContactUs = () => {
             <div>
               <label className="block text-black font-bold mb-2">Mail Id</label>
               <input
+                name="email"
                 type="email"
                 placeholder="Enter Your Mailid"
                 className="w-full p-2 border border-orange-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 animate-glow"
@@ -54,6 +99,7 @@ const ContactUs = () => {
             <div>
               <label className="block text-black font-bold mb-2">Message</label>
               <textarea
+                name="message"
                 placeholder="Enter Your Description"
                 rows={4}
                 className="w-full p-2 border border-orange-400 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-400 animate-glow"
@@ -73,6 +119,9 @@ const ContactUs = () => {
         {/* Spine only on desktop */}
         <div className="hidden md:block absolute top-0 bottom-0 left-1/2 w-[2px] bg-gray-300 shadow-md z-10" />
       </div>
+
+      {/* Toast Container */}
+      <ToastContainer position="top-center" autoClose={3000} />
 
       {/* Animations */}
       <style>

@@ -33,6 +33,22 @@ const bikeSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  modelYear: { 
+    type: String, 
+    required: true,
+  },
+  mileage: { 
+    type: String, 
+    required: true,
+  },
+  cc: { 
+    type: String, 
+    required: true, 
+  },
+  quantity: { 
+    type: Number, 
+    required: true, 
+  },
 });
 
 module.exports = mongoose.model("Bike", bikeSchema);
