@@ -1,5 +1,10 @@
+<<<<<<< HEAD
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
 
 body {
   @apply font-poppins dark:bg-gray-900 dark:text-white;
 }
+=======
+/* In your main CSS file */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap');
+>>>>>>> ac63892218a7777499e480241f25ad8ea469a2b6
