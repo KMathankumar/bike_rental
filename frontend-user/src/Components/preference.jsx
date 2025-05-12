@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
 const Preference = () => {
   const navigate = useNavigate();
   const [selected, setSelected] = useState({
@@ -100,17 +99,17 @@ const Preference = () => {
       {renderCategory("Nearby", data.nearby, "nearby")}
 
       <div className="flex flex-col sm:flex-row justify-center gap-4 mt-10">
-      <button
-  onClick={() => navigate("/results")}
-  className={`py-2 px-10 rounded-full transition text-white ${
-    isSelectionEmpty
-      ? "bg-orange-300 cursor-not-allowed"
-      : "bg-orange-500 hover:bg-orange-600"
-  }`}
-  disabled={isSelectionEmpty}
->
-  Find
-</button>
+        <button
+          onClick={() => navigate("/results")}
+          className={`py-2 px-10 rounded-full transition text-white ${
+            isSelectionEmpty
+              ? "bg-orange-300 cursor-not-allowed"
+              : "bg-orange-500 hover:bg-orange-600"
+          }`}
+          disabled={isSelectionEmpty}
+        >
+          Find
+        </button>
 
         <button
           onClick={handleClear}

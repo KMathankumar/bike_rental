@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 const VendorCard = () => {
   const [bikes, setBikes] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(""); // 🔥 Add search state
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showAll, setShowAll] = useState(false); // 🔥 Toggle for More/Less
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -18,6 +19,9 @@ const VendorCard = () => {
   const filteredBikes = bikes.filter((bike) =>
     bike.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  // Show only first 6 or all depending on toggle
+  const visibleBikes = showAll ? filteredBikes : filteredBikes.slice(0, 6);
 
   return (
     <div id="vendor-section" className="bg-gray-100 py-10 font-['Poppins']">
@@ -35,15 +39,15 @@ const VendorCard = () => {
               className="w-full border-2 border-gray-300 focus:border-orange-500 rounded-full py-3 px-5 pl-12 text-sm focus:outline-none shadow-md"
             />
             <div className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
-              <i className="fas fa-search"></i> {/* FontAwesome search icon */}
+              <i className="fas fa-search"></i>
             </div>
           </div>
         </div>
       </div>
 
       <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {filteredBikes.length > 0 ? (
-          filteredBikes.map((bike, index) => (
+        {visibleBikes.length > 0 ? (
+          visibleBikes.map((bike, index) => (
             <motion.div
               key={bike._id}
               initial={{ opacity: 0, y: 30 }}
@@ -52,7 +56,6 @@ const VendorCard = () => {
               viewport={{ once: true }}
               className="bg-white rounded-xl shadow-md hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 flex flex-col sm:flex-row overflow-hidden"
             >
-              {/* --- Bike Card Content --- */}
               <div className="relative w-full sm:w-1/2 bg-gradient-to-t from-white to-gray-100 flex items-center justify-center group">
                 <motion.img
                   src={bike.img}
@@ -96,6 +99,18 @@ const VendorCard = () => {
           </p>
         )}
       </div>
+
+      {/* More / Less Button */}
+      {filteredBikes.length > 6 && (
+        <div className="text-center mt-8">
+          <button
+            onClick={() => setShowAll(!showAll)}
+            className="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-2 px-6 rounded-full transition duration-300"
+          >
+            {showAll ? "Less" : "More"}
+          </button>
+        </div>
+      )}
     </div>
   );
 };

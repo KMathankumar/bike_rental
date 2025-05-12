@@ -1,11 +1,17 @@
-import React, { useState, useEffect, useRef } from "react";
+"use client";
+
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
 import Homebg from "../assets/Bikebg8.jpg";
+import { useLocation } from "react-router-dom";
 
 const Search = () => {
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   const menuRef = useRef();
   const toggleBtnRef = useRef();
+  const location = useLocation();
 
   const toggleMenu = () => setMenuOpen((prev) => !prev);
 
@@ -25,7 +31,6 @@ const Search = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [menuOpen]);
 
-  // 🛠 Smooth scroll to Vendor Section
   const handleScroll = () => {
     const vendorSection = document.getElementById("vendor-section");
     if (vendorSection) {
@@ -35,14 +40,12 @@ const Search = () => {
 
   return (
     <header className="relative bg-black text-white font-[Poppins]">
-      {/* Background Image */}
       <img
-        src={Homebg}
+        src={Homebg || "/placeholder.svg"}
         alt="A motorcycle parked in a scenic outdoor setting"
         className="w-full h-screen object-cover"
       />
 
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black bg-opacity-50 flex flex-col justify-between">
         {/* Navbar */}
         <nav className="flex justify-between items-center p-4 md:p-6">
@@ -63,10 +66,37 @@ const Search = () => {
 
           {/* Desktop Nav */}
           <ul className="hidden md:flex space-x-4 md:space-x-6 text-sm md:text-base items-center">
-            <li><a href="#" className="hover:text-orange-500">Home</a></li>
-            <li><a href="#" className="hover:text-orange-500">About Us</a></li>
-            <li><a href="#" className="hover:text-orange-500">Contact</a></li>
-            <li><img src="https://storage.googleapis.com/a1aa/image/UXSGhObe3tltLEtGNJrXkXr8UAwfj4preR0Mgs2pz3o.jpg" alt="Profile" className="rounded-full w-9 h-9 object-cover" /></li>
+            <li>
+              <button
+                onClick={() => navigate("/")}
+                className="hover:text-orange-500"
+              >
+                Home
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => navigate("/about")}
+                className="hover:text-orange-500"
+              >
+                About Us
+              </button>
+            </li>
+            <li>
+              <button
+                onClick={() => navigate("/contact")}
+                className="hover:text-orange-500"
+              >
+                Contact
+              </button>
+            </li>
+            <li>
+              <img
+                src="https://storage.googleapis.com/a1aa/image/UXSGhObe3tltLEtGNJrXkXr8UAwfj4preR0Mgs2pz3o.jpg"
+                alt="Profile"
+                className="rounded-full w-9 h-9 object-cover"
+              />
+            </li>
           </ul>
 
           {/* Hamburger Icon */}
@@ -75,8 +105,18 @@ const Search = () => {
             className="md:hidden text-white focus:outline-none"
             onClick={toggleMenu}
           >
-            <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+            <svg
+              className="w-8 h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 6h16M4 12h16M4 18h16"
+              />
             </svg>
           </button>
         </nav>
@@ -88,18 +128,40 @@ const Search = () => {
             className="md:hidden w-full p-6 text-white text-base space-y-4 relative z-30"
             style={{
               backgroundColor: "rgba(0, 0, 0, 0.6)",
-              WebkitBoxReflect: "below 0px linear-gradient(transparent, rgba(255,255,255,0.2))",
+              WebkitBoxReflect:
+                "below 0px linear-gradient(transparent, rgba(255,255,255,0.2))",
             }}
           >
             <ul className="flex flex-col space-y-3">
-              <li><a href="#" className="hover:text-orange-500 transition-all duration-200">Home</a></li>
-              <li><a href="#" className="hover:text-orange-500 transition-all duration-200">About Us</a></li>
-              <li><a href="#" className="hover:text-orange-500 transition-all duration-200">Contact</a></li>
+              <li>
+                <button
+                  onClick={() => navigate("/")}
+                  className="hover:text-orange-500 transition-all duration-200"
+                >
+                  Home
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigate("/about")}
+                  className="hover:text-orange-500 transition-all duration-200"
+                >
+                  About Us
+                </button>
+              </li>
+              <li>
+                <button
+                  onClick={() => navigate("/contact")}
+                  className="hover:text-orange-500 transition-all duration-200"
+                >
+                  Contact
+                </button>
+              </li>
             </ul>
           </div>
         )}
 
-        {/* Taglines + Down Arrow Section */}
+        {/* Taglines + Down Arrow */}
         <div className="text-center mt-20">
           <motion.h1
             initial={{ y: -40, opacity: 0 }}
@@ -118,7 +180,7 @@ const Search = () => {
             Explore the Perfect Ride Today!
           </motion.h2>
 
-          {/* Down Arrow Button */}
+          {/* Down Arrow */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -126,12 +188,11 @@ const Search = () => {
             className="flex justify-center mt-12"
           >
             <button
-  onClick={handleScroll}
-  className="bg-transparent text-orange-500 hover:text-white text-5xl animate-bounce focus:outline-none"
->
-  ⮯
-</button>
-
+              onClick={handleScroll}
+              className="bg-transparent text-orange-500 hover:text-white text-5xl animate-bounce focus:outline-none"
+            >
+              ⮯
+            </button>
           </motion.div>
         </div>
       </div>

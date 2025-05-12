@@ -1,76 +1,137 @@
-import React, { useState, useEffect } from "react";
-import AboutBg from "../assets/Bikebg6.jpg";
+"use client"
+
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import AboutBg from "../assets/Bikebg6.jpg"
 
 const AboutPage = () => {
-  const [cursorPosition, setCursorPosition] = useState({ x: 0, y: 0 });
+  const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
-    const handleMouseMove = (event) => {
-      setCursorPosition({ x: event.clientX, y: event.clientY });
-    };
-
-    window.addEventListener("mousemove", handleMouseMove);
-    return () => window.removeEventListener("mousemove", handleMouseMove);
-  }, []);
+    setIsVisible(true)
+  }, [])
 
   return (
-    <div className="w-full h-[500px] font-[Poppins] overflow-hidden relative">
-      {/* Background Image Section */}
+    <div className="w-full h-screen font-[Poppins] overflow-hidden relative">
+      {/* Background Image Section with Parallax Effect */}
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(${AboutBg})` }}
+        style={{
+          backgroundImage: `url(${AboutBg})`,
+          backgroundAttachment: "fixed",
+        }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-60" />
       </div>
 
-      {/* Content */}
-      <div className="relative z-10 flex items-center justify-start h-full px-4 sm:px-12 text-white">
-        <div className="max-w-3xl">
-          <h1 className="text-3xl sm:text-5xl font-bold mb-2 hover:text-orange-400 hover:scale-105 transition-transform duration-500">
-            AboutUs!
-          </h1>
-          <h2 className="text-orange-400 text-lg sm:text-2xl mb-4 font-semibold hover:text-orange-500 hover:scale-105 transition-transform duration-500">
-            Our Story
-          </h2>
-          <p className="text-sm sm:text-lg leading-relaxed hover:text-orange-400 transition-all duration-300">
-            At{" "}
-            <span className="italic font-semibold text-orange-300">
-              Rideon Rentals
-            </span>
-            , we make bike rentals easy, affordable, and hassle-free. Whether it's a city ride or a long trip, our well-maintained bikes ensure a smooth journey. With a quick booking process and flexible rental options, you get the freedom to ride on your terms. Experience convenience, quality, and adventure—all in one ride!
-          </p>
-        </div>
+      {/* Content Container */}
+      <div className="relative z-10 flex flex-col md:flex-row h-full">
+        {/* Left Content */}
+        <motion.div
+          initial={{ opacity: 0, x: -100 }}
+          animate={{ opacity: isVisible ? 1 : 0, x: isVisible ? 0 : -100 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="w-full md:w-1/2 flex items-center justify-center p-8 md:p-16"
+        >
+          <div className="max-w-2xl">
+            <motion.h1
+              initial={{ y: -50 }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="text-4xl sm:text-6xl font-bold mb-4 text-white hover:text-orange-400 transition-all duration-500"
+            >
+              AboutUs!
+            </motion.h1>
+
+            <motion.h2
+              initial={{ y: -30 }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="text-orange-400 text-xl sm:text-3xl mb-6 font-semibold hover:text-orange-500 transition-all duration-500"
+            >
+              Our Story
+            </motion.h2>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.6 }}
+              className="text-base sm:text-xl text-gray-200 leading-relaxed"
+            >
+              At <span className="italic font-semibold text-orange-300">Rideon Rentals</span>, we make bike rentals
+              easy, affordable, and hassle-free. Whether it's a city ride or a long trip, our well-maintained bikes
+              ensure a smooth journey. With a quick booking process and flexible rental options, you get the freedom to
+              ride on your terms.
+            </motion.p>
+
+            <motion.p
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.8 }}
+              className="text-base sm:text-xl text-gray-200 mt-4 leading-relaxed"
+            >
+              Experience convenience, quality, and adventure—all in one ride!
+            </motion.p>
+
+            <motion.button
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 1 }}
+              whileHover={{ scale: 1.05, backgroundColor: "#ff6a00" }}
+              className="mt-8 px-8 py-3 bg-orange-500 text-white rounded-full font-semibold shadow-lg hover:shadow-orange-500/50 transition-all duration-300"
+            >
+              Explore Our Fleet
+            </motion.button>
+          </div>
+        </motion.div>
+
+        {/* Right Content - Motorcycle Image */}
+        <motion.div
+          initial={{ opacity: 0, x: 100 }}
+          animate={{ opacity: isVisible ? 1 : 0, x: isVisible ? 0 : 100 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="w-full md:w-1/2 flex items-center justify-center p-8 relative overflow-hidden"
+        >
+          <motion.div
+            initial={{ scale: 0.8, rotate: -5 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ duration: 0.8, delay: 0.5 }}
+            className="relative w-full max-w-lg"
+          >
+            <div className="absolute inset-0 bg-orange-500 rounded-full blur-3xl opacity-20 animate-pulse"></div>
+          </motion.div>
+        </motion.div>
       </div>
 
-      {/* Custom Cursor */}
-      <div
-        style={{
-          position: "absolute",
-          left: `${cursorPosition.x - 15}px`,
-          top: `${cursorPosition.y - 15}px`,
-          width: "30px",
-          height: "30px",
-          backgroundColor: "rgba(255, 165, 0, 0.7)",
-          borderRadius: "50%",
-          pointerEvents: "none",
-          transform: "translate(-50%, -50%)",
-          transition: "all 0.1s ease-in-out",
-          zIndex: 50,
-        }}
-      ></div>
+      {/* Animated Background Elements
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(5)].map((_, i) => (
+          <div
+            key={i}
+            className="absolute rounded-full bg-orange-500/10"
+            style={{
+              width: `${Math.random() * 300 + 50}px`,
+              height: `${Math.random() * 300 + 50}px`,
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animation: `float ${Math.random() * 10 + 10}s infinite ease-in-out`,
+              animationDelay: `${Math.random() * 5}s`,
+            }}
+          />
+        ))}
+      </div> */}
 
-      {/* Hover Cursor Effect */}
+      {/* Animation Styles */}
       <style>
         {`
-          .cursor-hover-effect:hover {
-            transform: scale(1.5);
-            background-color: rgba(255, 165, 0, 1);
-            transition: all 0.3s ease;
+          @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
           }
         `}
       </style>
     </div>
-  );
-};
+  )
+}
 
-export default AboutPage;
+export default AboutPage

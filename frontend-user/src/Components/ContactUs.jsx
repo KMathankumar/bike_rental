@@ -18,16 +18,11 @@ const ContactUs = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    if (!isLoggedIn) {
-      toast.error("Please login to send message");
-      return;
-    }
-
+  
     const name = e.target.name.value;
     const email = e.target.email.value;
     const message = e.target.message.value;
-
+  
     try {
       const response = await fetch("http://localhost:5000/api/contact", {
         method: "POST",
@@ -36,7 +31,7 @@ const ContactUs = () => {
         },
         body: JSON.stringify({ name, email, message }),
       });
-
+  
       const result = await response.json();
       if (result.success) {
         toast.success("Message sent successfully!");
@@ -49,6 +44,7 @@ const ContactUs = () => {
       toast.error("Something went wrong. Try again later.");
     }
   };
+  
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100 font-[Poppins] overflow-hidden p-4">
