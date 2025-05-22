@@ -90,7 +90,7 @@ function App() {
         <Route path="/contact" element={<ContactUs />} />
         <Route path="/payment" element={<Payment />} />
       </Routes>
-      <Payment/>
+      {/* <Payment/> */}
     </>
   )
 }

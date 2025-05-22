@@ -1,41 +1,48 @@
-import React, { useState, useRef } from "react";
-import Swal from "sweetalert2";
-import "sweetalert2/dist/sweetalert2.min.css";
-import { useNavigate } from "react-router-dom";
+"use client"
+import { useState, useRef } from "react"
+import Swal from "sweetalert2"
+import "sweetalert2/dist/sweetalert2.min.css"
+import { useNavigate, useLocation } from "react-router-dom"
 
 const DocumentAuthentication = () => {
-  const [activeTab, setActiveTab] = useState("aadhaar");
-  const [otpSent, setOtpSent] = useState({ aadhaar: false, license: false });
-  const [aadhaarNumber, setAadhaarNumber] = useState("");
-  const [aadhaarOtp, setAadhaarOtp] = useState("");
-  const [licenseNumber, setLicenseNumber] = useState("");
-  const [dob, setDob] = useState("");
-  const [licenseOtp, setLicenseOtp] = useState("");
-  const navigate = useNavigate();
+  const location = useLocation()
+  const { totalAmount, rentalAmount, depositAmount, bikeDetails } = location.state || {}
+  const navigate = useNavigate()
+
+  // Tabs
+  const [activeTab, setActiveTab] = useState("aadhaar")
+  const [otpSent, setOtpSent] = useState({ aadhaar: false, license: false })
+
+  // Aadhaar Fields
+  const [aadhaarNumber, setAadhaarNumber] = useState("")
+  const [aadhaarOtp, setAadhaarOtp] = useState("")
+
+  // License Fields
+  const [licenseNumber, setLicenseNumber] = useState("")
+  const [dob, setDob] = useState("")
+  const [licenseOtp, setLicenseOtp] = useState("")
 
   // File Upload Refs and States
-  const aadhaarFrontRef = useRef(null);
-  const aadhaarBackRef = useRef(null);
-  const licenseFrontRef = useRef(null);
-  const licenseBackRef = useRef(null);
-  const aadhaarPhotoRef = useRef(null);
-  const licensePhotoRef = useRef(null);
+  const aadhaarFrontRef = useRef(null)
+  const aadhaarBackRef = useRef(null)
+  const licenseFrontRef = useRef(null)
+  const licenseBackRef = useRef(null)
+  const aadhaarPhotoRef = useRef(null)
+  const licensePhotoRef = useRef(null)
 
-  const [aadhaarFrontFile, setAadhaarFrontFile] = useState(null);
-  const [aadhaarBackFile, setAadhaarBackFile] = useState(null);
-  const [licenseFrontFile, setLicenseFrontFile] = useState(null);
-  const [licenseBackFile, setLicenseBackFile] = useState(null);
-  const [aadhaarPhotoFile, setAadhaarPhotoFile] = useState(null);
-  const [licensePhotoFile, setLicensePhotoFile] = useState(null);
+  const [aadhaarFrontFile, setAadhaarFrontFile] = useState(null)
+  const [aadhaarBackFile, setAadhaarBackFile] = useState(null)
+  const [licenseFrontFile, setLicenseFrontFile] = useState(null)
+  const [licenseBackFile, setLicenseBackFile] = useState(null)
+  const [aadhaarPhotoFile, setAadhaarPhotoFile] = useState(null)
+  const [licensePhotoFile, setLicensePhotoFile] = useState(null)
 
-  // Unified file handler
-  const handleFileChange = (e, setType, ref) => {
-    const file = e.target.files[0];
-    if (file) {
-      setType(file);
-      ref.current.value = null; // Reset input to allow re-selecting same file
-    }
-  };
+  // Unified file handler with no re-upload allowed
+  const handleFileChange = (e, setType) => {
+    const file = e.target.files[0]
+    if (!file) return
+    setType(file)
+  }
 
   // Send OTP
   const sendOtp = (type) => {
@@ -44,98 +51,145 @@ const DocumentAuthentication = () => {
         "Invalid Aadhaar",
         "Enter a valid 12-digit Aadhaar number.",
         "warning"
-      );
+      )
     }
     if (type === "license" && (!licenseNumber || !dob)) {
       return Swal.fire(
         "Missing Info",
         "Enter License Number and Date of Birth.",
         "warning"
-      );
+      )
     }
-    setOtpSent((prev) => ({ ...prev, [type]: true }));
+
+    setOtpSent((prev) => ({ ...prev, [type]: true }))
     Swal.fire({
       icon: "success",
       title: "OTP Sent",
       text: `OTP sent successfully to your registered ${type === "aadhaar" ? "Aadhaar" : "License"} number.`,
       timer: 2000,
       showConfirmButton: false,
-    });
-  };
+    })
+  }
 
   // Verify OTP
   const verifyOtp = (type) => {
-    const otp = type === "aadhaar" ? aadhaarOtp : licenseOtp;
+    const otp = type === "aadhaar" ? aadhaarOtp : licenseOtp
     if (otp.length !== 6) {
-      return Swal.fire("Invalid OTP", "Enter a valid 6-digit OTP.", "warning");
+      return Swal.fire("Invalid OTP", "Enter a valid 6-digit OTP.", "warning")
     }
+
     Swal.fire({
       icon: "success",
       title: "Verified",
       text: `${type === "aadhaar" ? "Aadhaar" : "License"} verified successfully! 🎉`,
       timer: 2000,
       showConfirmButton: false,
-    });
-  };
-
-  // Update handleSubmit function
-const handleSubmit = () => {
-  const isAadhaarValid =
-    aadhaarNumber.length === 12 &&
-    otpSent.aadhaar &&
-    aadhaarOtp.length === 6 &&
-    aadhaarFrontFile &&
-    aadhaarBackFile &&
-    aadhaarPhotoFile;
-
-  const isLicenseValid =
-    licenseNumber.length > 0 &&
-    dob.length > 0 &&
-    otpSent.license &&
-    licenseOtp.length === 6 &&
-    licenseFrontFile &&
-    licenseBackFile &&
-    licensePhotoFile;
-
-  if (!isAadhaarValid || !isLicenseValid) {
-    Swal.fire({
-      icon: "error",
-      title: "Incomplete Form",
-      html: `
-        <div style="text-align:left">
-          ${!isAadhaarValid ? "<p>• Aadhaar section is incomplete</p>" : ""}
-          ${!isLicenseValid ? "<p>• License section is incomplete</p>" : ""}
-        </div>
-      `,
-      confirmButtonText: "OK",
-      customClass: {
-        container: "my-swal",
-        popup: "my-swal-popup",
-        title: "my-swal-title",
-        htmlContainer: "my-swal-html",
-        confirmButton: "my-swal-button",
-      },
-    });
-    return;
+    })
   }
 
-  // Navigate to payment page
-  navigate("/payment");
+  // Submit Form
+  const handleSubmit = () => {
+    const isAadhaarValid =
+      aadhaarNumber.length === 12 &&
+      otpSent.aadhaar &&
+      aadhaarOtp.length === 6 &&
+      aadhaarFrontFile &&
+      aadhaarBackFile &&
+      aadhaarPhotoFile
 
-    // Proceed with actual document submission
+    const isLicenseValid =
+      licenseNumber.length > 0 &&
+      dob.length > 0 &&
+      otpSent.license &&
+      licenseOtp.length === 6 &&
+      licenseFrontFile &&
+      licenseBackFile &&
+      licensePhotoFile
+
+    if (!isAadhaarValid || !isLicenseValid) {
+      Swal.fire({
+        icon: "error",
+        title: "Incomplete Form",
+        html: `
+          <div style="text-align:left">
+            ${!isAadhaarValid ? "<p>• Aadhaar section is incomplete</p>" : ""}
+            ${!isLicenseValid ? "<p>• License section is incomplete</p>" : ""}
+          </div>
+        `,
+        confirmButtonText: "OK",
+        customClass: {
+          container: "my-swal",
+          popup: "my-swal-popup",
+          title: "my-swal-title",
+          htmlContainer: "my-swal-html",
+          confirmButton: "my-swal-button",
+        },
+      })
+      return
+    }
+
+    // Navigate to payment page with total amount
+    navigate("/payment", {
+      state: {
+        totalAmount,
+        rentalAmount,
+        depositAmount,
+        bikeDetails,
+      },
+    })
+
+    // Show success message
     Swal.fire({
       icon: "success",
       title: "Documents Submitted!",
       text: "Your documents have been submitted successfully.",
       confirmButtonText: "OK",
-    });
-
-    // You can now send data to backend or perform further actions
-  };
+    })
+  }
 
   return (
     <div className="bg-gray-100 min-h-screen font-poppins pt-28">
       <main className="container mx-auto px-4 py-6 pt-28">
+        {/* Booking Summary Card */}
+        {totalAmount && (
+          <div className="bg-white p-4 rounded-lg shadow-md max-w-md mx-auto mb-6">
+            <h2 className="text-lg font-bold text-orange-500 mb-2">Booking Summary</h2>
+            <div className="space-y-1 text-sm">
+              {bikeDetails && (
+                <div className="flex items-center gap-2 mb-2">
+                  {bikeDetails.image && (
+                    <img
+                      src={bikeDetails.image || "/placeholder.svg"}
+                      alt={bikeDetails.name}
+                      className="w-12 h-12 object-cover rounded"
+                    />
+                  )}
+                  <div>
+                    <p className="font-medium">{bikeDetails.name}</p>
+                    <p className="text-xs text-gray-500">
+                      {bikeDetails.quantity} {bikeDetails.quantity > 1 ? "bikes" : "bike"} •{" "}
+                      {new Date(bikeDetails.pickupDate).toLocaleDateString()}
+                    </p>
+                  </div>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span>Rental Amount:</span>
+                <span>₹{rentalAmount}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Deposit Amount:</span>
+                <span>₹{depositAmount}</span>
+              </div>
+              <div className="flex justify-between font-semibold text-orange-600 border-t border-gray-200 pt-1 mt-1">
+                <span>Total Amount:</span>
+                <span>₹{totalAmount}</span>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Auth Card */}
         <div className="bg-white p-6 rounded-lg shadow-md max-w-md mx-auto">
           <h1 className="text-2xl font-bold mb-6 text-center">Document Authentication</h1>
 
@@ -168,15 +222,16 @@ const handleSubmit = () => {
                   title="Enter a valid 12-digit Aadhaar number"
                   placeholder="Enter your 12-digit Aadhaar number"
                   onChange={(e) => {
-                    const value = e.target.value;
+                    const value = e.target.value
                     if (/^\d*$/.test(value)) {
-                      setAadhaarNumber(value);
+                      setAadhaarNumber(value)
                     }
                   }}
                   value={aadhaarNumber}
                   className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
                 />
               </div>
+
               {!otpSent.aadhaar ? (
                 <button
                   onClick={() => sendOtp("aadhaar")}
@@ -208,58 +263,86 @@ const handleSubmit = () => {
                 <label className="block text-sm font-medium mb-1">Upload Aadhaar</label>
                 <div className="grid grid-cols-2 gap-2">
                   {/* Front */}
-                  <label
-                    className="h-24 border-2 border-dashed flex items-center justify-center rounded bg-gray-50 cursor-pointer text-center text-xs text-gray-500"
-                    onClick={() => aadhaarFrontRef.current.click()}
+                  <div
+                    className={`h-24 border-2 border-dashed flex items-center justify-center rounded bg-gray-50 cursor-pointer text-center text-xs text-gray-500 ${
+                      aadhaarFrontFile ? "bg-green-50 border-green-400" : "border-gray-300"
+                    }`}
+                    onClick={() => {
+                      if (!aadhaarFrontFile) aadhaarFrontRef.current.click()
+                    }}
                   >
-                    {aadhaarFrontFile ? aadhaarFrontFile.name : "Front"}
+                    {aadhaarFrontFile ? (
+                      <span className="text-green-600 truncate max-w-[100px]">
+                        {aadhaarFrontFile.name}
+                      </span>
+                    ) : (
+                      "Front"
+                    )}
                     <input
                       type="file"
                       ref={aadhaarFrontRef}
-                      onChange={(e) =>
-                        handleFileChange(e, setAadhaarFrontFile, aadhaarFrontRef)
-                      }
+                      onChange={(e) => handleFileChange(e, setAadhaarFrontFile)}
                       className="hidden"
                       accept="image/*,application/pdf"
+                      disabled={!!aadhaarFrontFile}
                     />
-                  </label>
+                  </div>
+
                   {/* Back */}
-                  <label
-                    className="h-24 border-2 border-dashed flex items-center justify-center rounded bg-gray-50 cursor-pointer text-center text-xs text-gray-500"
-                    onClick={() => aadhaarBackRef.current.click()}
+                  <div
+                    className={`h-24 border-2 border-dashed flex items-center justify-center rounded bg-gray-50 cursor-pointer text-center text-xs text-gray-500 ${
+                      aadhaarBackFile ? "bg-green-50 border-green-400" : "border-gray-300"
+                    }`}
+                    onClick={() => {
+                      if (!aadhaarBackFile) aadhaarBackRef.current.click()
+                    }}
                   >
-                    {aadhaarBackFile ? aadhaarBackFile.name : "Back"}
+                    {aadhaarBackFile ? (
+                      <span className="text-green-600 truncate max-w-[100px]">
+                        {aadhaarBackFile.name}
+                      </span>
+                    ) : (
+                      "Back"
+                    )}
                     <input
                       type="file"
                       ref={aadhaarBackRef}
-                      onChange={(e) =>
-                        handleFileChange(e, setAadhaarBackFile, aadhaarBackRef)
-                      }
+                      onChange={(e) => handleFileChange(e, setAadhaarBackFile)}
                       className="hidden"
                       accept="image/*,application/pdf"
+                      disabled={!!aadhaarBackFile}
                     />
-                  </label>
+                  </div>
                 </div>
               </div>
 
               {/* Aadhaar Photo Upload */}
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-1">Upload Your Photo</label>
-                <label
-                  className="h-28 border-2 border-dashed flex items-center justify-center rounded bg-gray-50 cursor-pointer text-center text-xs text-gray-500"
-                  onClick={() => aadhaarPhotoRef.current.click()}
+                <div
+                  className={`h-28 border-2 border-dashed flex items-center justify-center rounded bg-gray-50 cursor-pointer text-center text-xs text-gray-500 ${
+                    aadhaarPhotoFile ? "bg-green-50 border-green-400" : "border-gray-300"
+                  }`}
+                  onClick={() => {
+                    if (!aadhaarPhotoFile) aadhaarPhotoRef.current.click()
+                  }}
                 >
-                  {aadhaarPhotoFile ? aadhaarPhotoFile.name : "Click to upload photo"}
+                  {aadhaarPhotoFile ? (
+                    <span className="text-green-600 truncate max-w-[120px]">
+                      {aadhaarPhotoFile.name}
+                    </span>
+                  ) : (
+                    "Click to upload photo"
+                  )}
                   <input
                     type="file"
                     ref={aadhaarPhotoRef}
-                    onChange={(e) =>
-                      handleFileChange(e, setAadhaarPhotoFile, aadhaarPhotoRef)
-                    }
+                    onChange={(e) => handleFileChange(e, setAadhaarPhotoFile)}
                     className="hidden"
                     accept="image/*"
+                    disabled={!!aadhaarPhotoFile}
                   />
-                </label>
+                </div>
               </div>
             </>
           )}
@@ -273,7 +356,7 @@ const handleSubmit = () => {
                   type="text"
                   pattern="^[A-Z]{2}[0-9]{2}[0-9]{4}[0-9]{7}$"
                   title="Enter a valid License Number (e.g., TN0920160012345)"
-                  placeholder="Enter License Number (e.g., TN0920160012345)"
+                  placeholder="TN0920160012345"
                   onChange={(e) => setLicenseNumber(e.target.value.toUpperCase())}
                   value={licenseNumber}
                   className="w-full p-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-orange-400"
@@ -319,58 +402,86 @@ const handleSubmit = () => {
                 <label className="block text-sm font-medium mb-1">Upload License</label>
                 <div className="grid grid-cols-2 gap-2">
                   {/* Front */}
-                  <label
-                    className="h-24 border-2 border-dashed flex items-center justify-center rounded bg-gray-50 cursor-pointer text-center text-xs text-gray-500"
-                    onClick={() => licenseFrontRef.current.click()}
+                  <div
+                    className={`h-24 border-2 border-dashed flex items-center justify-center rounded bg-gray-50 cursor-pointer text-center text-xs text-gray-500 ${
+                      licenseFrontFile ? "bg-green-50 border-green-400" : "border-gray-300"
+                    }`}
+                    onClick={() => {
+                      if (!licenseFrontFile) licenseFrontRef.current.click()
+                    }}
                   >
-                    {licenseFrontFile ? licenseFrontFile.name : "Front"}
+                    {licenseFrontFile ? (
+                      <span className="text-green-600 truncate max-w-[100px]">
+                        {licenseFrontFile.name}
+                      </span>
+                    ) : (
+                      "Front"
+                    )}
                     <input
                       type="file"
                       ref={licenseFrontRef}
-                      onChange={(e) =>
-                        handleFileChange(e, setLicenseFrontFile, licenseFrontRef)
-                      }
+                      onChange={(e) => handleFileChange(e, setLicenseFrontFile)}
                       className="hidden"
                       accept="image/*,application/pdf"
+                      disabled={!!licenseFrontFile}
                     />
-                  </label>
+                  </div>
+
                   {/* Back */}
-                  <label
-                    className="h-24 border-2 border-dashed flex items-center justify-center rounded bg-gray-50 cursor-pointer text-center text-xs text-gray-500"
-                    onClick={() => licenseBackRef.current.click()}
+                  <div
+                    className={`h-24 border-2 border-dashed flex items-center justify-center rounded bg-gray-50 cursor-pointer text-center text-xs text-gray-500 ${
+                      licenseBackFile ? "bg-green-50 border-green-400" : "border-gray-300"
+                    }`}
+                    onClick={() => {
+                      if (!licenseBackFile) licenseBackRef.current.click()
+                    }}
                   >
-                    {licenseBackFile ? licenseBackFile.name : "Back"}
+                    {licenseBackFile ? (
+                      <span className="text-green-600 truncate max-w-[100px]">
+                        {licenseBackFile.name}
+                      </span>
+                    ) : (
+                      "Back"
+                    )}
                     <input
                       type="file"
                       ref={licenseBackRef}
-                      onChange={(e) =>
-                        handleFileChange(e, setLicenseBackFile, licenseBackRef)
-                      }
+                      onChange={(e) => handleFileChange(e, setLicenseBackFile)}
                       className="hidden"
                       accept="image/*,application/pdf"
+                      disabled={!!licenseBackFile}
                     />
-                  </label>
+                  </div>
                 </div>
               </div>
 
               {/* License Photo Upload */}
               <div className="mb-6">
                 <label className="block text-sm font-medium mb-1">Upload Your Photo</label>
-                <label
-                  className="h-28 border-2 border-dashed flex items-center justify-center rounded bg-gray-50 cursor-pointer text-center text-xs text-gray-500"
-                  onClick={() => licensePhotoRef.current.click()}
+                <div
+                  className={`h-28 border-2 border-dashed flex items-center justify-center rounded bg-gray-50 cursor-pointer text-center text-xs text-gray-500 ${
+                    licensePhotoFile ? "bg-green-50 border-green-400" : "border-gray-300"
+                  }`}
+                  onClick={() => {
+                    if (!licensePhotoFile) licensePhotoRef.current.click()
+                  }}
                 >
-                  {licensePhotoFile ? licensePhotoFile.name : "Click to upload photo"}
+                  {licensePhotoFile ? (
+                    <span className="text-green-600 truncate max-w-[120px]">
+                      {licensePhotoFile.name}
+                    </span>
+                  ) : (
+                    "Click to upload photo"
+                  )}
                   <input
                     type="file"
                     ref={licensePhotoRef}
-                    onChange={(e) =>
-                      handleFileChange(e, setLicensePhotoFile, licensePhotoRef)
-                    }
+                    onChange={(e) => handleFileChange(e, setLicensePhotoFile)}
                     className="hidden"
                     accept="image/*"
+                    disabled={!!licensePhotoFile}
                   />
-                </label>
+                </div>
               </div>
             </>
           )}
@@ -385,7 +496,7 @@ const handleSubmit = () => {
         </div>
       </main>
     </div>
-  );
-};
+  )
+}
 
-export default DocumentAuthentication;
+export default DocumentAuthentication
